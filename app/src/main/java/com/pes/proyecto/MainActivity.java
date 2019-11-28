@@ -27,12 +27,17 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    EditText EditName;
+    EditText EditPass;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        EditName = (EditText) findViewById(R.id.editText);
+        EditPass = (EditText) findViewById(R.id.editText2);
     }
-    public void sayHelloThreads(View view) {
+    public void LoginClick(View view) {
 
         new Thread(new Runnable() {
             InputStream stream = null;
@@ -43,22 +48,12 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
 
-                    String query = String.format("http://192.168.0.13:9000/Application/login");
+                    String query = String.format("http://192.168.0.13:9000/Application/loginandroid");
                     URL url = new URL(query);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(10000 );
-                    conn.setConnectTimeout(15000 /* milliseconds */);
-                    conn.setRequestMethod("GET");
-                    conn.setDoInput(true);
-                    conn.connect();
 
-//-----------------------------------------------------
-                    URL url = new URL("http://example.net/new-message.php");
                     Map<String,Object> params = new LinkedHashMap<>();
-                    params.put("nom", "Freddie the Fish");
-                    params.put("email", "fishie@seamail.example.com");
-                    params.put("reply_to_thread", 10394);
-                    params.put("message", "Shark attacks in Botany Bay have gotten out of control. We need more defensive dolphins to protect the schools here, but Mayor Porpoise is too busy stuffing his snout with lobsters. He's so shellfish.");
+                    params.put("nom", EditName.getText());
+                    params.put("password", EditPass.getText());
 
                     StringBuilder postData = new StringBuilder();
                     for (Map.Entry<String,Object> param : params.entrySet()) {
@@ -70,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                     byte[] postDataBytes = postData.toString().getBytes("UTF-8");
 
                     HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                    conn.setReadTimeout(10000 );
+                    conn.setConnectTimeout(15000 /* milliseconds */);
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                     conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     //n.setText(result);
 
                     //Codi correcte
-                    Log.i("lolaforms1", result);
+
                     handler.post(new Runnable() {
                         public void run() {
                             TextView n = (TextView) findViewById (R.id.textView);
