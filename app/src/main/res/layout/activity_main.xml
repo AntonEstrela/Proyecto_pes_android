@@ -14,6 +14,7 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textPersonName"
+        android:text="lola"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -45,6 +46,7 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textPassword"
+        android:text="lolap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -53,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:onClick="LoginClick"
+        android:onClick="LoginClick2"
         android:text="Log in"
         app:layout_constraintEnd_toEndOf="@+id/editText2"
         app:layout_constraintTop_toBottomOf="@+id/editText2" />
@@ -67,4 +69,15 @@
         android:text="Result:"
         app:layout_constraintStart_toStartOf="@+id/editText2"
         app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:onClick="LoginGuest"
+        android:text="Guest"
+        app:layout_constraintStart_toStartOf="@+id/editText2"
+        app:layout_constraintTop_toBottomOf="@+id/editText2" />
 </android.support.constraint.ConstraintLayout>
