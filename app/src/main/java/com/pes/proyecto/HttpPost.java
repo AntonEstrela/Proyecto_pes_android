@@ -1,9 +1,7 @@
 package com.pes.proyecto;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -20,7 +18,7 @@ import java.util.Iterator;
 import javax.net.ssl.HttpsURLConnection;
 
 public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
-    private String path;// = "/Application/loginandroid";
+    private String path;
     public void SendRequest(JSONObject params, String path){
         this.path = path;
         execute(params);

@@ -52,9 +52,12 @@ public class LoggedInActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new CantantsRecyclerViewAdapter(null, this));
+    }
 
-
-        request();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new GetList().SendRequest("/Application/GetCantants");
     }
 
     public void AddSinger(View view){
@@ -66,162 +69,19 @@ public class LoggedInActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public class SendRequest extends AsyncTask<JSONObject, Void, String> {
-
-        protected void onPreExecute(){
-
-        }
-
-        protected String doInBackground(JSONObject... arg0) {
-
-            try{
-
-                URL url = new URL("http://192.168.0.16:9000/Application/loginandroid");
-
-                JSONObject postDataParams = arg0[0];
-
-                Log.e("params",postDataParams.toString());
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getPostDataString(postDataParams));
-
-                writer.flush();
-                writer.close();
-                os.close();
-
-                int responseCode=conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-
-                    BufferedReader in=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuffer sb = new StringBuffer("");
-                    String line="";
-
-                    while((line = in.readLine()) != null) {
-
-                        sb.append(line);
-                        break;
-                    }
-
-                    in.close();
-                    return sb.toString();
-
-                }
-                else {
-                    return new String("false : "+responseCode);
-                }
-            }
-            catch(Exception e){
-                return new String("Exception: " + e.getMessage());
-            }
-        }
-
+    private class GetList extends HttpGet{
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-            if(result.equals("OK")){
-                Intent intent = new Intent(getApplicationContext(), LoggedInActivity.class);
-                startActivity(intent);
+            try {
+                //Toast.makeText(con, result, Toast.LENGTH_LONG);
+                JSONArray jsonArray = new JSONArray(result);
+
+                recyclerView.setAdapter(new CantantsRecyclerViewAdapter(jsonArray, con));
             }
-
-
-        }
-    }
-
-    public String getPostDataString(JSONObject params) throws Exception {
-
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-
-        Iterator<String> itr = params.keys();
-
-        while(itr.hasNext()){
-
-            String key= itr.next();
-            Object value = params.get(key);
-
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(key, "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-
-        }
-        return result.toString();
-    }
-
-
-    public void request(){
-        new Thread(new Runnable() {
-            InputStream stream = null;
-            String str = "";
-            String result = null;
-            Handler handler = new Handler();
-            public void run() {
-
-                try {
-
-                    String query = String.format("http://192.168.0.16:9000/Application/GetCantants");
-                    URL url = new URL(query);
-
-                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-                    conn.setReadTimeout(10000 );
-                    conn.setConnectTimeout(15000 /* milliseconds */);
-                    conn.setRequestMethod("GET");
-                    conn.setDoOutput(false);
-
-
-                    stream = conn.getInputStream();
-
-                    BufferedReader reader = null;
-
-                    StringBuilder sb = new StringBuilder();
-
-                    reader = new BufferedReader(new InputStreamReader(stream));
-
-                    String line = null;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                    }
-                    result = sb.toString();
-                    // Mostrar resultat en el quadre de text.
-                    // Codi incorrecte
-                    // EditText n = (EditText) findViewById (R.id.edit_message);
-                    //n.setText(result);
-
-                    //Codi correcte
-
-                    handler.post(new Runnable() {
-                        public void run() {
-                            try {
-                                //Toast.makeText(con, result, Toast.LENGTH_LONG);
-                                JSONArray jsonArray = new JSONArray(result);
-
-                                recyclerView.setAdapter(new CantantsRecyclerViewAdapter(jsonArray, con));
-                            }
-                            catch(Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            catch(Exception e) {
+                e.printStackTrace();
             }
-        }).start();
+        }
     }
 
 }
