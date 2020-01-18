@@ -1,6 +1,7 @@
 package com.pes.proyecto;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
     EditText EditName;
     EditText EditPass;
+    EditText EditServer;
+    SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         EditName = (EditText) findViewById(R.id.editText);
         EditPass = (EditText) findViewById(R.id.editText2);
+        EditServer = (EditText) findViewById(R.id.editText3);
+
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        EditName.setText(sharedPref.getString("User", ""));
+        EditPass.setText(sharedPref.getString("Pass", ""));
+        EditServer.setText(sharedPref.getString("Server", ""));
+
     }
 
     public void LoginGuest(View view){
@@ -56,11 +66,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void LoginClick2(View view){
         try {
+            ConfigSingleton.getInstance().ServerAddress = EditServer.getText().toString();
+
             JSONObject obj = new JSONObject();
             obj.put("user.nom", EditName.getText().toString());
             obj.put("user.password", EditPass.getText().toString());
 
-            new SendRequest().execute(obj);
+            new PostLogin().SendRequest(obj, "/Application/loginandroid");
         }
         catch(Exception e){}
     }
@@ -138,6 +150,26 @@ public class MainActivity extends AppCompatActivity {
         }).start();*/
     }
 
+    private class PostLogin extends HttpPost{
+        @Override
+        protected void onPostExecute(String result) {
+            //Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+            if(result.equals("OK")){
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("User", EditName.getText().toString());
+                editor.putString("Pass", EditPass.getText().toString());
+                editor.putString("Server", ConfigSingleton.getInstance().ServerAddress);
+                editor.commit();
+
+
+                Intent intent = new Intent(getApplicationContext(), LoggedInActivity.class);
+                intent.putExtra("admin", true);
+                startActivity(intent);
+            }
+
+
+        }
+    }
 
 
 
