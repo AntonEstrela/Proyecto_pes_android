@@ -2,27 +2,24 @@ package com.pes.proyecto;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.lang.ref.WeakReference;
 
 public class SingerActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private Context con = this;
+    private boolean admin = false;
 
     private TextView txtNom;
     private TextView txtPais;
@@ -37,6 +34,7 @@ public class SingerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         nomCantant = intent.getStringExtra("cantant");
+        admin = intent.getBooleanExtra("admin", false);
 
         txtNom = findViewById(R.id.textView4);
         txtPais = findViewById(R.id.textView5);
@@ -50,7 +48,7 @@ public class SingerActivity extends AppCompatActivity {
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new CantantsRecyclerViewAdapter(null, this));
+        recyclerView.setAdapter(new CansonsRecyclerViewAdapter(null, this));
 
 
         txtNom.setText("Name: " + nomCantant);
@@ -64,6 +62,30 @@ public class SingerActivity extends AppCompatActivity {
         super.onStart();
         new GetCantant().SendRequest("/Application/GetCantant?cantant=" + nomCantant);
         new GetCansons().SendRequest("/Application/GetCansonsByCantant?cantant=" + nomCantant);
+    }
+
+    public void AddSong(View view){
+        if(!admin){
+            Toast.makeText(SingerActivity.this, "Registration requiered", Toast.LENGTH_LONG).show();
+            return;
+        }
+        Intent intent = new Intent(getApplicationContext(), AddSongActivity.class);
+        intent.putExtra("singer", nomCantant);
+        startActivity(intent);
+    }
+
+    private static class PostDelete extends HttpPost{
+        private WeakReference<SingerActivity> SingerActivityWeakReference;
+        public PostDelete(SingerActivity activity){
+            SingerActivityWeakReference = new WeakReference<>(activity);
+        }
+        @Override
+        protected void onPostExecute(String s){
+            Toast.makeText(SingerActivityWeakReference.get(), s, Toast.LENGTH_SHORT).show();
+            if(s.equals("OK")){
+                SingerActivityWeakReference.get().finish();
+            }
+        }
     }
 
     private class GetCantant extends HttpGet{
@@ -94,5 +116,6 @@ public class SingerActivity extends AppCompatActivity {
 
         }
     }
+
 
 }

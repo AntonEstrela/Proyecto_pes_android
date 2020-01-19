@@ -1,6 +1,12 @@
 package com.pes.proyecto;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,13 +63,16 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
     public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        String name = null;
+        String lyrics = null;
         if(values == null){
             return;
         }
         try {
             JSONObject jsonObject = values.getJSONObject(position);
-            String name = jsonObject.getString("nom");
+            name = jsonObject.getString("nom");
             String data = jsonObject.getString("data");
+            lyrics = jsonObject.getString("lletra");
             holder.txtNom.setText(name);
             holder.txtData.setText(data);
             new GetCantants(holder).SendRequest("/Application/GetCantantsByCanso?canso=" + name);
@@ -71,14 +80,32 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
         catch (Exception e){
             e.printStackTrace();
         }
+        final String name2 = name;
+        final String lyrics2 = lyrics;
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(name2 != null){
+                    new AlertDialog.Builder(context)
+                            .setTitle(name2 + " lyrics:")
+                            .setMessage(lyrics2)
 
+                            // Specifying a listener allows you to take an action before dismissing the dialog.
+                            // The dialog is automatically dismissed when a dialog button is clicked.
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Continue with delete operation
+                                }
+                            })
+
+                            // A null listener allows the button to dismiss the dialog and take no further action.
+                            .setNegativeButton(android.R.string.no, null)
+                            .show();
+                }
+            }
+        });
     }
-    //public void Click(Track track){
-    //Intent intent = new Intent(context, TrackInfo.class);
-    //intent.putExtra(EXTRA_MESSAGE, track);
-    //context.startActivity(intent);
-    //}
-    // Return the size of your dataset (invoked by the layout manager)
+    
     private class GetCantants extends HttpGet{
         private ViewHolder holder;
         GetCantants(ViewHolder holder){

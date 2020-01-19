@@ -15,6 +15,7 @@ import org.json.JSONObject;
 public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRecyclerViewAdapter.ViewHolder> {
     private JSONArray values;
     private Context context;
+    private boolean admin;
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -35,9 +36,10 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public CantantsRecyclerViewAdapter(JSONArray myDataset, Context context) {
+    public CantantsRecyclerViewAdapter(JSONArray myDataset, Context context, boolean admin) {
         values = myDataset;
         this.context = context;
+        this.admin = admin;
     }
 
     // Create new views (invoked by the layout manager)
@@ -86,6 +88,7 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
     public void Click(String name){
         Intent intent = new Intent(context, SingerActivity.class);
         intent.putExtra("cantant", name);
+        intent.putExtra("admin", admin);
         context.startActivity(intent);
     }
     // Return the size of your dataset (invoked by the layout manager)

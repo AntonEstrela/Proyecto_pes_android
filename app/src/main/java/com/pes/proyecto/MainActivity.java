@@ -1,5 +1,7 @@
 package com.pes.proyecto;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     EditText EditName;
     EditText EditPass;
     EditText EditServer;
+    Context context;
     SharedPreferences sharedPref;
 
     @Override
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         EditName = (EditText) findViewById(R.id.editText);
         EditPass = (EditText) findViewById(R.id.editText2);
         EditServer = (EditText) findViewById(R.id.editText3);
+        context = this;
 
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         EditName.setText(sharedPref.getString("User", ""));
@@ -65,90 +69,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void LoginClick2(View view){
+        new PostLogin().SendRequest(getJson(), "/Application/loginandroid");
+    }
+    private JSONObject getJson(){
         try {
             ConfigSingleton.getInstance().ServerAddress = EditServer.getText().toString();
 
             JSONObject obj = new JSONObject();
             obj.put("user.nom", EditName.getText().toString());
             obj.put("user.password", EditPass.getText().toString());
+            return obj;
 
-            new PostLogin().SendRequest(obj, "/Application/loginandroid");
         }
-        catch(Exception e){}
+        catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public void LoginClick(View view) {
-
-
-
-        /*new Thread(new Runnable() {
-            InputStream stream = null;
-            String str = "";
-            String result = null;
-            Handler handler = new Handler();
-            public void run() {
-
-                try {
-
-                    String query = String.format("http://192.168.0.13:9000/Application/loginandroid");
-                    URL url = new URL(query);
-
-                    Map<String,Object> params = new LinkedHashMap<>();
-                    params.put("nom", EditName.getText());
-                    params.put("password", EditPass.getText());
-
-                    StringBuilder postData = new StringBuilder();
-                    for (Map.Entry<String,Object> param : params.entrySet()) {
-                        if (postData.length() != 0) postData.append('&');
-                        postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
-                        postData.append('=');
-                        postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
-                    }
-                    byte[] postDataBytes = postData.toString().getBytes("UTF-8");
-
-                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-                    conn.setReadTimeout(10000 );
-                    conn.setConnectTimeout(15000);
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                    conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
-                    conn.setDoOutput(true);
-                    conn.getOutputStream().write(postDataBytes);
-
-
-                    stream = conn.getInputStream();
-
-                    BufferedReader reader = null;
-
-                    StringBuilder sb = new StringBuilder();
-
-                    reader = new BufferedReader(new InputStreamReader(stream));
-
-                    String line = null;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                    }
-                    result = sb.toString();
-                    // Mostrar resultat en el quadre de text.
-                    // Codi incorrecte
-                    // EditText n = (EditText) findViewById (R.id.edit_message);
-                    //n.setText(result);
-
-                    //Codi correcte
-
-                    handler.post(new Runnable() {
-                        public void run() {
-                            TextView n = (TextView) findViewById (R.id.textView);
-                            n.setText("Result: "+result);
-                        }
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();*/
-    }
 
     private class PostLogin extends HttpPost{
         @Override
@@ -166,108 +104,33 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("admin", true);
                 startActivity(intent);
             }
+            if(result.equals("FAIL")){
+                new AlertDialog.Builder(context)
+                        .setTitle("Login failed")
+                        .setMessage("Register user " + EditName.getText().toString() + "?")
+
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                new PostRegister().SendRequest(getJson(), "/Application/registerandroid");
+                            }
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+            }
 
 
         }
     }
 
-
-
-    public class SendRequest extends AsyncTask<JSONObject, Void, String> {
-
-        protected void onPreExecute(){
-
-        }
-
-        protected String doInBackground(JSONObject... arg0) {
-
-            try{
-
-                URL url = new URL("http://192.168.0.16:9000/Application/loginandroid");
-
-                JSONObject postDataParams = arg0[0];
-
-                Log.e("params",postDataParams.toString());
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getPostDataString(postDataParams));
-
-                writer.flush();
-                writer.close();
-                os.close();
-
-                int responseCode=conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-
-                    BufferedReader in=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuffer sb = new StringBuffer("");
-                    String line="";
-
-                    while((line = in.readLine()) != null) {
-
-                        sb.append(line);
-                        break;
-                    }
-
-                    in.close();
-                    return sb.toString();
-
-                }
-                else {
-                    return new String("false : "+responseCode);
-                }
-            }
-            catch(Exception e){
-                return new String("Exception: " + e.getMessage());
-            }
-        }
-
+    private class PostRegister extends HttpPost{
         @Override
-        protected void onPostExecute(String result) {
-            //Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-            if(result.equals("OK")){
-                Intent intent = new Intent(getApplicationContext(), LoggedInActivity.class);
-                intent.putExtra("admin", true);
-                startActivity(intent);
-            }
-
-
+        protected void onPostExecute(String s) {
+            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public String getPostDataString(JSONObject params) throws Exception {
-
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-
-        Iterator<String> itr = params.keys();
-
-        while(itr.hasNext()){
-
-            String key= itr.next();
-            Object value = params.get(key);
-
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(key, "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-
-        }
-        return result.toString();
     }
 
 }

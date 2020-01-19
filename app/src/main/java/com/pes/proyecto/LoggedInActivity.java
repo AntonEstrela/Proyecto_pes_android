@@ -51,7 +51,7 @@ public class LoggedInActivity extends AppCompatActivity {
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new CantantsRecyclerViewAdapter(null, this));
+        recyclerView.setAdapter(new CantantsRecyclerViewAdapter(null, this, getAdmin()));
     }
 
     @Override
@@ -76,12 +76,15 @@ public class LoggedInActivity extends AppCompatActivity {
                 //Toast.makeText(con, result, Toast.LENGTH_LONG);
                 JSONArray jsonArray = new JSONArray(result);
 
-                recyclerView.setAdapter(new CantantsRecyclerViewAdapter(jsonArray, con));
+                recyclerView.setAdapter(new CantantsRecyclerViewAdapter(jsonArray, con, getAdmin()));
             }
             catch(Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+    private boolean getAdmin(){
+        return admin;
     }
 
 }
