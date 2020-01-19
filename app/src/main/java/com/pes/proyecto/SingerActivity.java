@@ -56,7 +56,43 @@ public class SingerActivity extends AppCompatActivity {
         txtNom.setText("Name: " + nomCantant);
 
 
-        request();
+        //request();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new GetCantant().SendRequest("/Application/GetCantant?cantant=" + nomCantant);
+        new GetCansons().SendRequest("/Application/GetCansonsByCantant?cantant=" + nomCantant);
+    }
+
+    private class GetCantant extends HttpGet{
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                paisCantant = jsonObject.getString("pais");
+                txtPais.setText("Country: " + paisCantant);
+
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class GetCansons extends HttpGet{
+        @Override
+        protected void onPostExecute(String result) {
+            try{
+                JSONArray jsonArray = new JSONArray(result);
+                recyclerView.setAdapter(new CansonsRecyclerViewAdapter(jsonArray, con));
+            }
+            catch (Exception e ){
+                e.printStackTrace();
+            }
+
+        }
     }
 
 
@@ -70,7 +106,7 @@ public class SingerActivity extends AppCompatActivity {
 
                 try {
 
-                    String query = String.format("http://192.168.0.16:9000/Application/GetCantant?cantant=" + nomCantant);
+                    String query = String.format("");
                     URL url = new URL(query);
 
                     HttpURLConnection conn = (HttpURLConnection)url.openConnection();

@@ -5,9 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,11 +16,12 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
     private Context context;
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
+    // you provide access to all the views for a data item in a view txtCantants
     public class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView txtNom;
         public TextView txtData;
+        public TextView txtCantants;
         public View layout;
 
         public ViewHolder(View v) {
@@ -52,7 +53,7 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NotNull final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         if(values == null){
@@ -61,9 +62,10 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
         try {
             JSONObject jsonObject = values.getJSONObject(position);
             String name = jsonObject.getString("nom");
-            int data = jsonObject.getInt("data");
+            String data = jsonObject.getString("data");
             holder.txtNom.setText(name);
             holder.txtData.setText(data);
+            new GetCantants(holder.txtCantants).SendRequest("/Application/GetCantantsByCanso?canso=" + name);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -76,6 +78,31 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
     //context.startActivity(intent);
     //}
     // Return the size of your dataset (invoked by the layout manager)
+    private class GetCantants extends HttpGet{
+        private TextView txtCantants;
+        GetCantants(TextView txtCantants){
+            this.txtCantants = txtCantants;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            try{
+                JSONArray jsonArray = new JSONArray(result);
+                int size = jsonArray.length();
+                StringBuilder sb = new StringBuilder();
+                sb.append("Cantants: ");
+                for(int i = 0; i < size; i++){
+                    if(i != 0){
+                        sb.append(", ");
+                    }
+                    sb.append(jsonArray.getJSONObject(i).getString("nom"));
+                }
+                txtCantants.setText(sb.toString());
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
     @Override
     public int getItemCount() {
         if(values == null){

@@ -2,8 +2,6 @@ package com.pes.proyecto;
 
 import android.os.Handler;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -12,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public abstract class HttpGet {
-    private String path;// = "/Application/loginandroid";
+    private String path;
     public void SendRequest(String path){
         this.path = path;
         request();
@@ -21,7 +19,6 @@ public abstract class HttpGet {
     private void request(){
         new Thread(new Runnable() {
             InputStream stream = null;
-            String str = "";
             String result = null;
             Handler handler = new Handler();
             public void run() {
@@ -51,13 +48,6 @@ public abstract class HttpGet {
                         sb.append(line);
                     }
                     result = sb.toString();
-                    // Mostrar resultat en el quadre de text.
-                    // Codi incorrecte
-                    // EditText n = (EditText) findViewById (R.id.edit_message);
-                    //n.setText(result);
-
-                    //Codi correcte
-
                     handler.post(new Runnable() {
                         public void run() {
                             onPostExecute(result);
