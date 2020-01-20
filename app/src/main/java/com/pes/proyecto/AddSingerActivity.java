@@ -27,8 +27,13 @@ public class AddSingerActivity extends AppCompatActivity {
     public void onClick(View view){
 
         try {
+            String nom = EditName.getText().toString();
+            if(nom.equals("")){
+                Toast.makeText(getApplicationContext(), "Anonymous singer?", Toast.LENGTH_SHORT).show();
+                return;
+            }
             JSONObject obj = new JSONObject();
-            obj.put("nom", EditName.getText().toString());
+            obj.put("nom", nom);
             obj.put("pais", EditPais.getText().toString());
             new PostSinger(this).SendRequest(obj, "/Application/AddCantant");
         }

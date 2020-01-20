@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +35,7 @@ public class LoggedInActivity extends AppCompatActivity {
     private Context con = this;
     private boolean admin = false;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,11 +54,22 @@ public class LoggedInActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new CantantsRecyclerViewAdapter(null, this, getAdmin()));
+
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        onStart();
+                    }
+                }
+        );
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        swipeRefreshLayout.setRefreshing(true);
         new GetList().SendRequest("/Application/GetCantants");
     }
 
@@ -80,6 +93,9 @@ public class LoggedInActivity extends AppCompatActivity {
             }
             catch(Exception e) {
                 e.printStackTrace();
+            }
+            finally {
+                swipeRefreshLayout.setRefreshing(false);
             }
         }
     }

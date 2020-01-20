@@ -2,6 +2,7 @@ package com.pes.proyecto;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -20,6 +21,12 @@ import javax.net.ssl.HttpsURLConnection;
 public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
     private String path;
     public void SendRequest(JSONObject params, String path){
+        if(params == null){
+            return;
+        }
+        if(path.equals("")){
+            return;
+        }
         this.path = path;
         execute(params);
     }

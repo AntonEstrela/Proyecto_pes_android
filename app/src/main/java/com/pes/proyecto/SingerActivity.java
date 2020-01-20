@@ -2,6 +2,7 @@ package com.pes.proyecto;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,8 @@ import java.lang.ref.WeakReference;
 public class SingerActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     private Context con = this;
     private boolean admin = false;
 
@@ -50,8 +53,19 @@ public class SingerActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new CansonsRecyclerViewAdapter(null, this));
 
+        swipeRefreshLayout = findViewById(R.id.swiperefresh2);
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        onStart();
+                    }
+                }
+        );
+
 
         txtNom.setText("Name: " + nomCantant);
+
 
 
         //request();
@@ -60,6 +74,7 @@ public class SingerActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        swipeRefreshLayout.setRefreshing(true);
         new GetCantant().SendRequest("/Application/GetCantant?cantant=" + nomCantant);
         new GetCansons().SendRequest("/Application/GetCansonsByCantant?cantant=" + nomCantant);
     }
@@ -109,6 +124,7 @@ public class SingerActivity extends AppCompatActivity {
             try{
                 JSONArray jsonArray = new JSONArray(result);
                 recyclerView.setAdapter(new CansonsRecyclerViewAdapter(jsonArray, con));
+                swipeRefreshLayout.setRefreshing(false);
             }
             catch (Exception e ){
                 e.printStackTrace();
