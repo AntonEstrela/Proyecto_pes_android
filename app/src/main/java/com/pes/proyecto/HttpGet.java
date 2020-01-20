@@ -11,8 +11,11 @@ import java.net.URL;
 
 public abstract class HttpGet {
     private String path;
-    public void SendRequest(String path){
+    void SendRequest(String path){
         this.path = path;
+        if(path.equals("")){
+            return;
+        }
         request();
 
     }
@@ -25,7 +28,7 @@ public abstract class HttpGet {
 
                 try {
 
-                    String query = String.format(ConfigSingleton.getInstance().ServerAddress + path);
+                    String query = ConfigSingleton.getInstance().ServerAddress + path;
                     URL url = new URL(query);
 
                     HttpURLConnection conn = (HttpURLConnection)url.openConnection();

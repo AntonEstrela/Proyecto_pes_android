@@ -74,9 +74,17 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject getJson(){
         try {
             ConfigSingleton.getInstance().ServerAddress = EditServer.getText().toString();
-
+            if(ConfigSingleton.getInstance().ServerAddress.equals("")){
+                Toast.makeText(getApplicationContext(), "Server empty", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+            String nom = EditName.getText().toString();
+            if(nom.equals("")){
+                Toast.makeText(getApplicationContext(), "User name empty", Toast.LENGTH_SHORT).show();
+                return null;
+            }
             JSONObject obj = new JSONObject();
-            obj.put("user.nom", EditName.getText().toString());
+            obj.put("user.nom", nom);
             obj.put("user.password", EditPass.getText().toString());
             return obj;
 

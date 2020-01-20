@@ -13,13 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
+
 public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecyclerViewAdapter.ViewHolder> {
     private JSONArray values;
     private Context context;
+    boolean admin = false;
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -40,9 +44,10 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public CansonsRecyclerViewAdapter(JSONArray myDataset, Context context) {
+    public CansonsRecyclerViewAdapter(JSONArray myDataset, Context context, boolean admin) {
         values = myDataset;
         this.context = context;
+        this.admin = admin;
     }
 
     // Create new views (invoked by the layout manager)
@@ -90,10 +95,42 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
                             .setTitle(name2 + " lyrics:")
                             .setMessage(lyrics2)
                             .setPositiveButton(android.R.string.ok, null)
+                            .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Delete(name2);
+                                }
+                            })
                             .show();
                 }
             }
         });
+    }
+
+    private void Delete(String name){
+        if(!admin){
+            Toast.makeText(context, "Registration requiered", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("nom", name);
+            new PostDelete(context).SendRequest(jsonObject, "/Application/DeleteCanso");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private static class PostDelete extends HttpPost{
+        private WeakReference<Context> SingerActivityWeakReference;
+        public PostDelete(Context activity){
+            SingerActivityWeakReference = new WeakReference<>(activity);
+        }
+        @Override
+        protected void onPostExecute(String s){
+            Toast.makeText(SingerActivityWeakReference.get(), s, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private class GetCantants extends HttpGet{

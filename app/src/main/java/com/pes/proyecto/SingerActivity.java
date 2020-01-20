@@ -51,14 +51,14 @@ public class SingerActivity extends AppCompatActivity {
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new CansonsRecyclerViewAdapter(null, this));
+        recyclerView.setAdapter(new CansonsRecyclerViewAdapter(null, this, false));
 
         swipeRefreshLayout = findViewById(R.id.swiperefresh2);
         swipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        onStart();
+                        onResume();
                     }
                 }
         );
@@ -72,8 +72,8 @@ public class SingerActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         swipeRefreshLayout.setRefreshing(true);
         new GetCantant().SendRequest("/Application/GetCantant?cantant=" + nomCantant);
         new GetCansons().SendRequest("/Application/GetCansonsByCantant?cantant=" + nomCantant);
@@ -87,20 +87,6 @@ public class SingerActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), AddSongActivity.class);
         intent.putExtra("singer", nomCantant);
         startActivity(intent);
-    }
-
-    private static class PostDelete extends HttpPost{
-        private WeakReference<SingerActivity> SingerActivityWeakReference;
-        public PostDelete(SingerActivity activity){
-            SingerActivityWeakReference = new WeakReference<>(activity);
-        }
-        @Override
-        protected void onPostExecute(String s){
-            Toast.makeText(SingerActivityWeakReference.get(), s, Toast.LENGTH_SHORT).show();
-            if(s.equals("OK")){
-                SingerActivityWeakReference.get().finish();
-            }
-        }
     }
 
     private class GetCantant extends HttpGet{
@@ -123,7 +109,7 @@ public class SingerActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             try{
                 JSONArray jsonArray = new JSONArray(result);
-                recyclerView.setAdapter(new CansonsRecyclerViewAdapter(jsonArray, con));
+                recyclerView.setAdapter(new CansonsRecyclerViewAdapter(jsonArray, con, admin));
                 swipeRefreshLayout.setRefreshing(false);
             }
             catch (Exception e ){
