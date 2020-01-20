@@ -2,11 +2,11 @@ package com.pes.proyecto;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -21,30 +21,30 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
     // you provide access to all the views for a data item in a view holder
     public class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public TextView txtNom;
-        public TextView txtPais;
+        TextView txtNom;
+        TextView txtPais;
         //public ImageView imageView;
         public View layout;
 
-        public ViewHolder(View v) {
+        ViewHolder(View v) {
             super(v);
             layout = v;
-            txtNom = (TextView) v.findViewById(R.id.textView);
-            txtPais = (TextView) v.findViewById(R.id.textView2);
-            //imageView = (ImageView) v.findViewById(R.id.imageView1);
+            txtNom = v.findViewById(R.id.textView);
+            txtPais = v.findViewById(R.id.textView2);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public CantantsRecyclerViewAdapter(JSONArray myDataset, Context context, boolean admin) {
+    CantantsRecyclerViewAdapter(JSONArray myDataset, Context context, boolean admin) {
         values = myDataset;
         this.context = context;
         this.admin = admin;
     }
 
     // Create new views (invoked by the layout manager)
+    @NonNull
     @Override
-    public CantantsRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CantantsRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
         LayoutInflater inflater = LayoutInflater.from(
                 parent.getContext());
@@ -57,7 +57,7 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         String name = "null";
@@ -76,7 +76,7 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
         catch (Exception e){
             e.printStackTrace();
         }
-        name2 = name.toString();
+        name2 = name;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,7 +85,7 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
         });
 
     }
-    public void Click(String name){
+    private void Click(String name){
         Intent intent = new Intent(context, SingerActivity.class);
         intent.putExtra("cantant", name);
         intent.putExtra("admin", admin);

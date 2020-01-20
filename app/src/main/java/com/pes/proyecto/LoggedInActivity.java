@@ -2,36 +2,18 @@ package com.pes.proyecto;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Handler;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Iterator;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class LoggedInActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private Context con = this;
     private boolean admin = false;
 
@@ -44,14 +26,14 @@ public class LoggedInActivity extends AppCompatActivity {
         Intent intent = getIntent();
         admin = intent.getBooleanExtra("admin", false);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView1);
+        recyclerView = findViewById(R.id.recyclerView1);
         // use this setting to
         // improve performance if you know that changes
         // in content do not change the layout size
         // of the RecyclerView
         recyclerView.setHasFixedSize(true);
         // use a linear layout manager
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new CantantsRecyclerViewAdapter(null, this, getAdmin()));
 

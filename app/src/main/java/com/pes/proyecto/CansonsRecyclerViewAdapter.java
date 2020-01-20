@@ -1,17 +1,13 @@
 package com.pes.proyecto;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,49 +19,49 @@ import java.lang.ref.WeakReference;
 public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecyclerViewAdapter.ViewHolder> {
     private JSONArray values;
     private Context context;
-    boolean admin = false;
+    private boolean admin = false;
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public TextView txtNom;
-        public TextView txtData;
-        public TextView txtCantants;
+        TextView txtNom;
+        TextView txtData;
+        TextView txtCantants;
         public View layout;
 
-        public ViewHolder(View v) {
+        ViewHolder(View v) {
             super(v);
             layout = v;
-            txtNom = (TextView) v.findViewById(R.id.textView);
-            txtCantants = (TextView) v.findViewById(R.id.textView2);
-            txtData = (TextView) v.findViewById(R.id.textView3);
+            txtNom = v.findViewById(R.id.textView);
+            txtCantants = v.findViewById(R.id.textView2);
+            txtData = v.findViewById(R.id.textView3);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public CansonsRecyclerViewAdapter(JSONArray myDataset, Context context, boolean admin) {
+    CansonsRecyclerViewAdapter(JSONArray myDataset, Context context, boolean admin) {
         values = myDataset;
         this.context = context;
         this.admin = admin;
     }
 
     // Create new views (invoked by the layout manager)
+    @NonNull
     @Override
-    public CansonsRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CansonsRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
         LayoutInflater inflater = LayoutInflater.from(
                 parent.getContext());
         View v =
                 inflater.inflate(R.layout.recycler_view_item, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         String name = null;
@@ -123,13 +119,13 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
     }
 
     private static class PostDelete extends HttpPost{
-        private WeakReference<Context> SingerActivityWeakReference;
-        public PostDelete(Context activity){
-            SingerActivityWeakReference = new WeakReference<>(activity);
+        public PostDelete(Context context) {
+            super(context);
         }
+
         @Override
         protected void onPostExecute(String s){
-            Toast.makeText(SingerActivityWeakReference.get(), s, Toast.LENGTH_SHORT).show();
+            Toast.makeText(contextWeakReference.get(), s, Toast.LENGTH_SHORT).show();
         }
     }
 

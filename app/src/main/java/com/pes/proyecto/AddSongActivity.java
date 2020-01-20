@@ -1,6 +1,7 @@
 package com.pes.proyecto;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -118,7 +119,7 @@ public class AddSongActivity extends AppCompatActivity {
             jsonObject.put("data", txtData.getText().toString());
             jsonObject.put("lletra", txtLletra.getText().toString());
             jsonObject.put("cantants", cantants);
-            new PostCanso(this).SendRequest(jsonObject, "/Application/AddCanso");
+            new PostCanso(this, this).SendRequest(jsonObject, "/Application/AddCanso");
 
         }
         catch (Exception e){
@@ -127,7 +128,8 @@ public class AddSongActivity extends AppCompatActivity {
     }
     private static class PostCanso extends HttpPost{
         private WeakReference<AddSongActivity> activityWeakReference;
-        public PostCanso(AddSongActivity activity){
+        PostCanso(Context context, AddSongActivity activity){
+            super(context);
             activityWeakReference = new WeakReference<>(activity);
         }
 

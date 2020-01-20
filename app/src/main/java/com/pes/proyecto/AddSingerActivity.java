@@ -35,7 +35,7 @@ public class AddSingerActivity extends AppCompatActivity {
             JSONObject obj = new JSONObject();
             obj.put("nom", nom);
             obj.put("pais", EditPais.getText().toString());
-            new PostSinger(this).SendRequest(obj, "/Application/AddCantant");
+            new PostSinger(this, this).SendRequest(obj, "/Application/AddCantant");
         }
         catch(Exception e){
             e.printStackTrace();
@@ -45,12 +45,13 @@ public class AddSingerActivity extends AppCompatActivity {
 
     private static class PostSinger extends HttpPost{
         private WeakReference<AddSingerActivity> addSingerActivityWeakReference;
-        public PostSinger(AddSingerActivity activity){
+        PostSinger(Context context, AddSingerActivity activity){
+            super(context);
             addSingerActivityWeakReference = new WeakReference<>(activity);
         }
         @Override
         protected void onPostExecute(String s) {
-            Toast.makeText(addSingerActivityWeakReference.get(), s, Toast.LENGTH_SHORT).show();
+            Toast.makeText(contextWeakReference.get(), s, Toast.LENGTH_SHORT).show();
             if(s.equals("OK")){
                 addSingerActivityWeakReference.get().finish();
             }

@@ -14,8 +14,6 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
-
 public class SingerActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -42,7 +40,7 @@ public class SingerActivity extends AppCompatActivity {
         txtNom = findViewById(R.id.textView4);
         txtPais = findViewById(R.id.textView5);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView2);
+        recyclerView = findViewById(R.id.recyclerView2);
         // use this setting to
         // improve performance if you know that changes
         // in content do not change the layout size

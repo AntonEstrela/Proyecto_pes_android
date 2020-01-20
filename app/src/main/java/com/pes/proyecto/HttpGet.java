@@ -40,13 +40,13 @@ public abstract class HttpGet {
 
                     stream = conn.getInputStream();
 
-                    BufferedReader reader = null;
+                    BufferedReader reader;
 
                     StringBuilder sb = new StringBuilder();
 
                     reader = new BufferedReader(new InputStreamReader(stream));
 
-                    String line = null;
+                    String line;
                     while ((line = reader.readLine()) != null) {
                         sb.append(line);
                     }

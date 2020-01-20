@@ -1,8 +1,8 @@
 package com.pes.proyecto;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -11,16 +11,25 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 import javax.net.ssl.HttpsURLConnection;
 
 public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
     private String path;
-    public void SendRequest(JSONObject params, String path){
+
+    WeakReference<Context> contextWeakReference;
+
+    HttpPost(Context context){
+
+        contextWeakReference = new WeakReference<>(context);
+    }
+    void SendRequest(JSONObject params, String path){
         if(params == null){
             return;
         }
@@ -38,8 +47,6 @@ public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
     protected String doInBackground(JSONObject... arg0) {
 
         try{
-            ;
-
             URL url = new URL(ConfigSingleton.getInstance().ServerAddress + path);
 
             JSONObject postDataParams = arg0[0];
@@ -54,8 +61,7 @@ public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
             conn.setDoOutput(true);
 
             OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(getPostDataString(postDataParams));
 
             writer.flush();
@@ -67,8 +73,8 @@ public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
             if (responseCode == HttpsURLConnection.HTTP_OK) {
 
                 BufferedReader in=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuffer sb = new StringBuffer("");
-                String line="";
+                StringBuilder sb = new StringBuilder();
+                String line;
 
                 while((line = in.readLine()) != null) {
 
@@ -81,16 +87,16 @@ public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
 
             }
             else {
-                return new String("false : "+responseCode);
+                return "false : " + responseCode;
             }
         }
         catch(Exception e){
-            return new String("Exception: " + e.getMessage());
+            return "Exception: " + e.getMessage();
         }
     }
 
 
-    public String getPostDataString(JSONObject params) throws Exception {
+    private String getPostDataString(JSONObject params) throws Exception {
 
         StringBuilder result = new StringBuilder();
         boolean first = true;
