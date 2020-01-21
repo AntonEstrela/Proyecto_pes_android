@@ -10,5 +10,5 @@ class ConfigSingleton {
     private ConfigSingleton() {
         ServerAddress = "http://192.168.0.16:9000";
     }
-    String ServerAddress;
+    String ServerAddress; //adreça del servidor
 }

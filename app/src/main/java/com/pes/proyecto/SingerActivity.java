@@ -73,17 +73,17 @@ public class SingerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         swipeRefreshLayout.setRefreshing(true);
-        new GetCantant().SendRequest("/Application/GetCantant?cantant=" + nomCantant);
-        new GetCansons().SendRequest("/Application/GetCansonsByCantant?cantant=" + nomCantant);
+        new GetCantant().SendRequest("/Application/GetCantant?cantant=" + nomCantant);//demanar el pais del cantant
+        new GetCansons().SendRequest("/Application/GetCansonsByCantant?cantant=" + nomCantant);//demanar les cançons del cantant
     }
 
-    public void AddSong(View view){
+    public void AddSong(View view){//boto afegir canço (add song)
         if(!admin){
             Toast.makeText(SingerActivity.this, "Registration requiered", Toast.LENGTH_LONG).show();
             return;
         }
-        Intent intent = new Intent(getApplicationContext(), AddSongActivity.class);
-        intent.putExtra("singer", nomCantant);
+        Intent intent = new Intent(getApplicationContext(), AddSongActivity.class);//activity per afegir canço
+        intent.putExtra("singer", nomCantant);//passar-li el nom del cantant perque quedi presel·leccionat en la llista de cantants
         startActivity(intent);
     }
 

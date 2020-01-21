@@ -20,16 +20,16 @@ import java.util.Iterator;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
+public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {//classe universal per fer posts
     private String path;
 
-    WeakReference<Context> contextWeakReference;
+    WeakReference<Context> contextWeakReference;//per si despres fa falta fer algun toast, passar-li el context
 
     HttpPost(Context context){
 
-        contextWeakReference = new WeakReference<>(context);
+        contextWeakReference = new WeakReference<>(context);//i poder fer la classe estatica per evitar fugues de memoria
     }
-    void SendRequest(JSONObject params, String path){
+    void SendRequest(JSONObject params, String path){//executar la petició
         if(params == null){
             return;
         }
@@ -96,9 +96,9 @@ public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
     }
 
 
-    private String getPostDataString(JSONObject params) throws Exception {
+    private String getPostDataString(JSONObject params) throws Exception {//sense comentaris
 
-        //return params.toString();
+        //return params.toString();//no cuela
         StringBuilder result = new StringBuilder();
         boolean first = true;
 

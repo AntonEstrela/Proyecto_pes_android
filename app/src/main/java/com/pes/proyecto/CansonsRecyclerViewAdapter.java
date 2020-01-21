@@ -62,7 +62,7 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) { //aixo s'executa per cada linea de la llista per omplir-la
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         String name = null;
@@ -77,16 +77,16 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
             lyrics = jsonObject.getString("lletra");
             holder.txtNom.setText(name);
             holder.txtData.setText(data);
-            new GetCantants(holder).SendRequest("/Application/GetCantantsByCanso?canso=" + name);
+            new GetCantants(holder).SendRequest("/Application/GetCantantsByCanso?canso=" + name);//demanar llista de cantants d'aquella canço
         }
         catch (Exception e){
             e.printStackTrace();
         }
         final String name2 = name;
         final String lyrics2 = lyrics;
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {//fer-ho clicable
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {//obrir el dialog amb lyrics i esborrar
                 if(name2 != null){
                     new AlertDialog.Builder(context)
                             .setTitle(name2 + " lyrics:")
@@ -104,7 +104,7 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
         });
     }
 
-    private void Delete(String name){
+    private void Delete(String name){//esborrar la canço
         if(!admin){
             Toast.makeText(context, "Registration requiered", Toast.LENGTH_SHORT).show();
             return;
@@ -112,7 +112,7 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
         try{
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("nom", name);
-            new PostDelete(context).SendRequest(jsonObject, "/Application/DeleteCanso");
+            new PostDelete(context).SendRequest(jsonObject, "/Application/DeleteCanso");//petició d'esborrar
         }
         catch (Exception e){
             e.printStackTrace();
@@ -140,7 +140,7 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
             this.holder = holder;
         }
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String result) {//quan arribi la resposta muntar un String amb els noms dels cantants d'aquella canço
             try{
                 JSONArray jsonArray = new JSONArray(result);
                 int size = jsonArray.length();
@@ -152,7 +152,7 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
                     }
                     sb.append(jsonArray.getJSONObject(i).getString("nom"));
                 }
-                holder.txtCantants.setText(sb.toString());
+                holder.txtCantants.setText(sb.toString());//i guardar-ho al TextView que toca
             }
             catch (Exception e){
                 e.printStackTrace();

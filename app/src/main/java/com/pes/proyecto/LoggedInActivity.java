@@ -49,13 +49,13 @@ public class LoggedInActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart() {//carregar la llista de cantants
         super.onStart();
-        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.setRefreshing(true);//que ruli
         new GetList().SendRequest("/Application/GetCantants");
     }
 
-    public void AddSinger(View view){
+    public void AddSinger(View view){//boto afegir cantant (add singer)
         if(!admin){
             Toast.makeText(LoggedInActivity.this, "Registration requiered", Toast.LENGTH_LONG).show();
             return;
@@ -71,17 +71,17 @@ public class LoggedInActivity extends AppCompatActivity {
                 //Toast.makeText(con, result, Toast.LENGTH_LONG);
                 JSONArray jsonArray = new JSONArray(result);
 
-                recyclerView.setAdapter(new CantantsRecyclerViewAdapter(jsonArray, con, getAdmin()));
+                recyclerView.setAdapter(new CantantsRecyclerViewAdapter(jsonArray, con, getAdmin()));//carregar la llista de cantants
             }
             catch(Exception e) {
                 e.printStackTrace();
             }
             finally {
-                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);//que ja no ruli
             }
         }
     }
-    private boolean getAdmin(){
+    private boolean getAdmin(){//soc administrador? (tinc dret per editar?)
         return admin;
     }
 

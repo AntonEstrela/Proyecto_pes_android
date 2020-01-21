@@ -9,9 +9,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public abstract class HttpGet {
+public abstract class HttpGet {//classe universal per fer gets
     private String path;
-    void SendRequest(String path){
+    void SendRequest(String path){//executar la petició
         this.path = path;
         if(path.equals("")){
             return;
@@ -63,6 +63,6 @@ public abstract class HttpGet {
             }
         }).start();
     }
-    protected abstract void onPostExecute(String result);
+    protected abstract void onPostExecute(String result);//com si fos l'AsyncTask
 
 }

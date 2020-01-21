@@ -57,7 +57,7 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {//aixó s'executa per omplir de dades cada linea
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         String name = "null";
@@ -71,13 +71,12 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
             String pais = jsonObject.getString("pais");
             holder.txtNom.setText(name);
             holder.txtPais.setText(pais);
-            //Picasso.with(context).load(values.get(position).getImatge().get(0)).into(holder.imageView);
         }
         catch (Exception e){
             e.printStackTrace();
         }
         name2 = name;
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {//que sigui clicable el cantant per obrir l'activity
             @Override
             public void onClick(View v) {
                 Click(name2);
@@ -85,7 +84,7 @@ public class CantantsRecyclerViewAdapter extends RecyclerView.Adapter<CantantsRe
         });
 
     }
-    private void Click(String name){
+    private void Click(String name){//obrir l'activity del cantant
         Intent intent = new Intent(context, SingerActivity.class);
         intent.putExtra("cantant", name);
         intent.putExtra("admin", admin);

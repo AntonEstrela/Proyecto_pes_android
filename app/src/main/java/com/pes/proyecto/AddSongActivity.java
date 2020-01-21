@@ -40,10 +40,10 @@ public class AddSongActivity extends AppCompatActivity {
         txtData.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
 
     }
-    public void onClickCancel(View view){
+    public void onClickCancel(View view){//boto cancel·lar (cancel) (tanca la activity)
         finish();
     }
-    public void onClickSave(View view){
+    public void onClickSave(View view){//boto guardar
         final String nom = txtNom.getText().toString();
         if(nom.equals("")){
             Toast.makeText(getApplicationContext(), "Anonymous song?", Toast.LENGTH_SHORT).show();
@@ -53,17 +53,17 @@ public class AddSongActivity extends AppCompatActivity {
         final String lletra = txtLletra.getText().toString();
         try{
             Integer.parseInt(data);//fallara si data no es numero
-            new GetCantants().SendRequest("/Application/GetCantants");
+            new GetCantants().SendRequest("/Application/GetCantants");//peticio per carregar llista de cantants al dialog
         }
         catch (Exception e ){
             e.printStackTrace();
         }
     }
-    private void selectSingers(JSONArray jsonArray){
+    private void selectSingers(JSONArray jsonArray){//obrir el dialog per seleccionar cantants
         try {
             final CharSequence[] items = new CharSequence[jsonArray.length()];
             boolean[] itemsChecked = new boolean[jsonArray.length()];
-            final LinkedList<String> cantants = new LinkedList<>();
+            final LinkedList<String> cantants = new LinkedList<>();//Llista de seleccionats
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 String name = jsonArray.getJSONObject(i).getString("nom");
@@ -78,7 +78,7 @@ public class AddSongActivity extends AppCompatActivity {
             builder.setTitle("Singers:");
             builder.setMultiChoiceItems(items, itemsChecked, new DialogInterface.OnMultiChoiceClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int position, boolean isChecked) {
+                public void onClick(DialogInterface dialog, int position, boolean isChecked) {//actualitzar llista de seleccionats
                     if(isChecked){
                         cantants.add(items[position].toString());
                     }
@@ -89,7 +89,7 @@ public class AddSongActivity extends AppCompatActivity {
             });
             builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(DialogInterface dialog, int which) {//muntar un string amb tots els cantants seleccionats
                     if(cantants.size() == 0){
                         Toast.makeText(getApplicationContext(), "Select at least one singer", Toast.LENGTH_LONG).show();
                         return;
@@ -99,7 +99,7 @@ public class AddSongActivity extends AppCompatActivity {
                         sb.append(c);
                         sb.append(";");
                     }
-                    commit(sb.substring(0, sb.length() - 1));
+                    commit(sb.substring(0, sb.length() - 1));//i cap al server
 
 
                 }
@@ -112,7 +112,7 @@ public class AddSongActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    private void commit(String cantants){
+    private void commit(String cantants){//pujar la canço al server
         try{
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("nom", txtNom.getText().toString());
@@ -137,7 +137,7 @@ public class AddSongActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             Toast.makeText(activityWeakReference.get(), s, Toast.LENGTH_LONG).show();
             if(s.equals("OK")){
-                activityWeakReference.get().finish();
+                activityWeakReference.get().finish();//Si tot ha anat be tancar l'activity
             }
         }
     }
@@ -147,7 +147,7 @@ public class AddSongActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             try {
                 JSONArray jsonArray = new JSONArray(result);
-                selectSingers(jsonArray);
+                selectSingers(jsonArray);//obrir el dialog
             }
             catch (Exception e){
                 e.printStackTrace();

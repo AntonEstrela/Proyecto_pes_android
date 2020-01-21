@@ -24,7 +24,7 @@ public class AddSingerActivity extends AppCompatActivity {
         EditPais = findViewById(R.id.editText5);
     }
 
-    public void onClick(View view){
+    public void onClick(View view){//Boto de guardar (save)
 
         try {
             String nom = EditName.getText().toString();

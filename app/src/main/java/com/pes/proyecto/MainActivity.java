@@ -39,16 +39,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void LoginGuest(View view){
+    public void LoginGuest(View view){//login com a guest (boto guest)
         Intent intent = new Intent(getApplicationContext(), LoggedInActivity.class);
-        intent.putExtra("admin", false);
+        intent.putExtra("admin", false);//sense ser admin
         startActivity(intent);
     }
 
-    public void LoginClick2(View view){
+    public void LoginClick2(View view){//login com a admin (boto login)
         new PostLogin(this, this).SendRequest(getJson(), "/Application/loginandroid");
     }
-    private JSONObject getJson(){
+    private JSONObject getJson(){//generar un json amb usuari i contrasenya, ja que s'utilitza per login d'admin i per registre
         try {
             ConfigSingleton.getInstance().ServerAddress = EditServer.getText().toString();
             if(ConfigSingleton.getInstance().ServerAddress.equals("")){
@@ -72,21 +72,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void GotLogin(String result){
+    public void GotLogin(String result){//processar el resultat del login
         //Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-        if(result.equals("OK")){
+        if(result.equals("OK")){//si ok, guardar les coses i cap a la nova activity
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("User", EditName.getText().toString());
             editor.putString("Pass", EditPass.getText().toString());
             editor.putString("Server", ConfigSingleton.getInstance().ServerAddress);
-            editor.commit();
+            editor.commit();//si, commit i no apply, perque amb apply no sempre guardava si es tanca rapid l'app i tampoc frena tant
 
 
             Intent intent = new Intent(getApplicationContext(), LoggedInActivity.class);
-            intent.putExtra("admin", true);
+            intent.putExtra("admin", true);//activity amb drets d'editar
             startActivity(intent);
         }
-        if(result.equals("FAIL")){
+        if(result.equals("FAIL")){//si fail ofereix registrar l'usuari
             new AlertDialog.Builder(context)
                     .setTitle("Login failed")
                     .setMessage("Register user " + EditName.getText().toString() + "?")
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     // The dialog is automatically dismissed when a dialog button is clicked.
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            new PostRegister(context).SendRequest(getJson(), "/Application/registerandroid");
+                            new PostRegister(context).SendRequest(getJson(), "/Application/registerandroid");//i ho fa si vols
                         }
                     })
 
