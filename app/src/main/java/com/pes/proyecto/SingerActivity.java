@@ -19,7 +19,7 @@ public class SingerActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private Context con = this;
+    private SingerActivity con = this;
     private boolean admin = false;
 
     private TextView txtNom;

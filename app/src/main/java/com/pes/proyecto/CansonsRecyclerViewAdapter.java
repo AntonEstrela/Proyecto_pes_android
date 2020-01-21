@@ -1,5 +1,6 @@
 package com.pes.proyecto;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +19,7 @@ import java.lang.ref.WeakReference;
 
 public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecyclerViewAdapter.ViewHolder> {
     private JSONArray values;
-    private Context context;
+    private SingerActivity context;
     private boolean admin = false;
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -40,7 +41,7 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    CansonsRecyclerViewAdapter(JSONArray myDataset, Context context, boolean admin) {
+    CansonsRecyclerViewAdapter(JSONArray myDataset, SingerActivity context, boolean admin) {
         values = myDataset;
         this.context = context;
         this.admin = admin;
@@ -119,13 +120,16 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
     }
 
     private static class PostDelete extends HttpPost{
-        PostDelete(Context context) {
-            super(context);
+        private WeakReference<SingerActivity> singerActivityWeakReference;
+        PostDelete(SingerActivity singerActivity) {
+            super(singerActivity.getApplicationContext());
+            singerActivityWeakReference = new WeakReference<>(singerActivity);
         }
 
         @Override
         protected void onPostExecute(String s){
             Toast.makeText(contextWeakReference.get(), s, Toast.LENGTH_SHORT).show();
+            singerActivityWeakReference.get().onResume();
 
         }
     }
