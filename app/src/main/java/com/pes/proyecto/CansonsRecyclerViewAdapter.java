@@ -90,8 +90,8 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
                     new AlertDialog.Builder(context)
                             .setTitle(name2 + " lyrics:")
                             .setMessage(lyrics2)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                            .setPositiveButton(android.R.string.cancel, null)
+                            .setNegativeButton("Delete song", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Delete(name2);
@@ -119,13 +119,14 @@ public class CansonsRecyclerViewAdapter extends RecyclerView.Adapter<CansonsRecy
     }
 
     private static class PostDelete extends HttpPost{
-        public PostDelete(Context context) {
+        PostDelete(Context context) {
             super(context);
         }
 
         @Override
         protected void onPostExecute(String s){
             Toast.makeText(contextWeakReference.get(), s, Toast.LENGTH_SHORT).show();
+
         }
     }
 

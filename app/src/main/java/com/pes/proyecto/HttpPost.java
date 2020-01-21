@@ -98,6 +98,7 @@ public abstract class HttpPost extends AsyncTask<JSONObject, Void, String> {
 
     private String getPostDataString(JSONObject params) throws Exception {
 
+        //return params.toString();
         StringBuilder result = new StringBuilder();
         boolean first = true;
 
